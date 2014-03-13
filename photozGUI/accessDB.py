@@ -35,6 +35,32 @@ class Candidate():
         self.table = table
         self.comment = comment
 
+    def create_method_table(self, method, catalog):
+        """
+        Add a new method into database
+
+        :param method: the method name -> need to be added into p_method
+        :param catalog: catalog of IDs to be associated with given method
+        """
+        cat = np.loadtxt(catalog,dtype={'names':['id','r500','ra','dec'],'formats':[int, float, float, float]})
+        self.cur.execute("DROP TABLE IF EXISTS {0:s}".format(method))
+        self.cur.execute("""CREATE TABLE {0:s} (
+        id INTEGER NOT NULL REFERENCES {1:s},
+        ra FLOAT,
+        dec FLOAT,
+        poserr FLOAT,
+        r500 FLOAT)
+        """.format(method, self.table))
+        if cat.size == 1: # one row data file
+            i = cat
+            self.cur.execute("INSERT INTO {0:s} VALUES (?, ?, ?, ?, ?)".format(method), \
+                             (int(i['id']), float(i['ra']), float(i['dec']), 0., float(i['r500'])))
+        else:
+            for i in cat:
+                self.cur.execute("INSERT INTO {0:s} VALUES (?, ?, ?, ?, ?)".format(method), \
+                                 (i['id'], i['ra'], i['dec'], 0., i['r500']))
+        self.conn.commit()
+
     def create_comment(self):
         """
         create comment database
@@ -96,10 +122,18 @@ class Candidate():
         :param methods: detection methods array
         :return: [0,1] array for each detection
         """
-        methods_name = ','.join(methods)
-        self.cur.execute("SELECT {0:s} FROM {1:s} WHERE id = ?".format(methods_name, self.table), (cid,))
-        return self.cur.fetchone()
+        #methods_name = ','.join(methods)
+        #self.cur.execute("SELECT {0:s} FROM {1:s} WHERE id = ?".format(methods_name, self.table), (cid,))
+        #return self.cur.fetchone()
 
+        flags = [0 for i in range(len(methods))]
+        for i, im in enumerate(methods):
+            self.cur.execute("SELECT id FROM {0:s} WHERE id = ?".format(im), (cid,))
+            r = self.cur.fetchone()
+            if r is not None:
+                flags[i] = 1
+        return flags
+                
     def get_pos(self, candidate_id, method=None):
         """
         get the position from candidate catalog
@@ -171,10 +205,10 @@ class Candidate():
                 self.cur.execute("UPDATE {0:s} SET {1:s} = 1 WHERE id = ?".format(self.table, method), (cid,))
         self.conn.commit()
 
-
 if __name__ == "__main__":
     db = Candidate()
     db.create_from_catalog("catalog.dat")
     db.create_comment()
+    db.create_method_table("manual", 'manual.cat')
     for i in P_method:
         db.update_method("all", i)

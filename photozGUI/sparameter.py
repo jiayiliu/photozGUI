@@ -71,11 +71,6 @@ OUTPUT_CMR_PATTERN = config.get("OUTPUT", "OUTPUT_CMR_PATTERN")
 #: region output files pattern - path/{0:s}
 OUTPUT_REGION_PATTERN = config.get("OUTPUT", "OUTPUT_REGION_PATTERN")
 
-########## Extra Loading ########
-n = config.getint("Extra", "N")
-for i in range(n):
-    exec(config.get("Extra", "E{0:d}".format(i)))
-
 ########### DS9 ##########
 def call_ds9(cid, band):
     """
@@ -86,3 +81,9 @@ def call_ds9(cid, band):
     """
     print "\033[33m ... Openning FITS file ... \033[0m"
     system("ds9new.sh {0:d} {1:s}".format(cid, band))
+
+########## Extra Loading ########
+n = config.getint("Extra", "N")
+for i in range(n):
+    exec(config.get("Extra", "E{0:d}".format(i)))
+
