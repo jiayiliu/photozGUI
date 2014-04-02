@@ -192,9 +192,10 @@ class GalController():
     def save_reg(self):
         """
         output to region file for DS9 to load
+
+        And close the save window
         """
         self.viewer.save_window()
-
         def save_reg_confirm():
             save_id = map(int, self.viewer.multi_list.curselection())
             for i in save_id:
@@ -205,7 +206,6 @@ class GalController():
                     self.model.galaxy.save_reg(OUTPUT_REGION_PATTERN.format("{0:d}_{1:d}".format(self.cluster_id, j)),
                                                self.model.cgid[CMR_combination[j]],
                                                color=CMR_COLOR[CMR_combination[j]])
-
         self.viewer.button_save_reg_confirm.config(command=save_reg_confirm)
 
     def select_galaxy_sketch(self, figure):
