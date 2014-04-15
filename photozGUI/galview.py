@@ -25,6 +25,7 @@ class GalViewer(Tk.Toplevel):
         :param master: master window
         """
         Tk.Toplevel.__init__(self, master)
+        self.title("Sketch and CMR viewer")
         # Data loading part
         ## Cluster information
         frame_data = Tk.Frame(self)

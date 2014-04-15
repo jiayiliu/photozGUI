@@ -196,6 +196,7 @@ class GalController():
         And close the save window
         """
         self.viewer.save_window()
+
         def save_reg_confirm():
             save_id = map(int, self.viewer.multi_list.curselection())
             for i in save_id:
@@ -206,6 +207,7 @@ class GalController():
                     self.model.galaxy.save_reg(OUTPUT_REGION_PATTERN.format("{0:d}_{1:d}".format(self.cluster_id, j)),
                                                self.model.cgid[CMR_combination[j]],
                                                color=CMR_COLOR[CMR_combination[j]])
+            self.viewer.close_save_window()
         self.viewer.button_save_reg_confirm.config(command=save_reg_confirm)
 
     def select_galaxy_sketch(self, figure):
@@ -237,6 +239,8 @@ class GalController():
             self.model.galaxy.plot_cmr(icmr[0], icmr[1],
                                        self.viewer.cmr_window[icmr].axis, gid=self.model.gid,
                                        marker='x', color="r", ls='None')
+            self.viewer.cmr_window[icmr].axis.set_xlim([16,24])
+            self.viewer.cmr_window[icmr].axis.set_ylim([0,3])
             self.viewer.cmr_window[icmr].update_canvas()
 
     def update_cmr_sketch(self, zid, icmr, **args):
@@ -283,6 +287,8 @@ class GalController():
                                                              self.viewer.cmr_window[icmr].axis,
                                                              gid=self.model.cgid[icmr],
                                                              marker='+', color=CMR_COLOR[icmr], ls='None')
+            self.viewer.cmr_window[icmr].axis.set_xlim([16,24])
+            self.viewer.cmr_window[icmr].axis.set_ylim([0,3])
             self.viewer.cmr_window[icmr].update_canvas()
 
     def update_galaxy_sketch(self):
@@ -313,7 +319,7 @@ class GalController():
         """
         ax = self.viewer.create_cmr(band1 + band2)
         self.model.galaxy.plot_cmr(band1, band2, ax, all=True,
-                                   marker=',', ms=2 , ls='None', color='b', alpha=0.3)
+                                   marker='.', ms=2 , ls='None', color='b', alpha=0.3)
         self.model.cmr.plot_all(band1, band2, ax, color='c', alpha=0.5)
 
     def view_fits(self, band):
@@ -323,6 +329,12 @@ class GalController():
         :param band: call ds9 to plot given band
         """
         call_ds9(self.cluster_id, band)
+        if band=='gri':
+            self.viewer.button_fits_gri.config(state=Tk.DISABLED)
+        elif band=='riz':
+            self.viewer.button_fits_riz.config(state=Tk.DISABLED)
+        else: #grz
+            self.viewer.button_fits_grz.config(state=Tk.DISABLED)
 
     def view_sketch(self, axis):
         """
@@ -332,7 +344,7 @@ class GalController():
         :return: None
         """
         self.model.galaxy.plot_sky(axis, all=True,
-                                   color='b', alpha=0.3, marker=',', ms=2, ls='None')
+                                   color='b', alpha=0.3, marker='.', ms=2, ls='None')
 
 if __name__ == "__main__":
     GalController()

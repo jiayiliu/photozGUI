@@ -74,8 +74,8 @@ class Galaxy():
         :param gid: galaxy id
         :param all: flag to plot all galaxies
         """
-        axis.set_xlim([14, 26])
-        axis.set_ylim([-2, 4])
+        axis.set_xlim([14, 24])
+        axis.set_ylim([-1, 3])
         axis.set_xlabel(band2)
         axis.set_ylabel(band1+'-'+band2)
         if (band1 in CAT_BANDS) and (band2 in CAT_BANDS):

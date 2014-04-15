@@ -55,8 +55,9 @@ class Cmr():
 
         :returns: length(z)
         """
-        return len(self.data[:, 0])
-
+        #return len(self.data[:, 0])
+        return np.sum(self.data[:,0]<1.0)
+        
     def get_z_range(self):
         """
         get the redshift range of CMR_combination file
@@ -99,7 +100,7 @@ class Cmr():
         """
         for i in range(self.get_z_num()):
             self.plot(i, band1, band2, axis, **args)
-
+            
 
 if __name__ == "__main__":
     import matplotlib.pylab as plt

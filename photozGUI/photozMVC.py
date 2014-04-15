@@ -57,7 +57,8 @@ class PhotozModel():
 
         :return: redshift of known cluster
         """
-        return "redshift: {0:f}".format(self.db.get_redshift(self.cid))
+        #return "redshift: {0:f}".format(self.db.get_redshift(self.cid))
+        return "redshift -1 (photozMVC.py)"
 
     def load_method(self, method):
         """
@@ -133,6 +134,7 @@ class PhotozViewer(Tk.Toplevel):
         :param master: master frame
         """
         Tk.Toplevel.__init__(self, master)
+        self.title("P(z) viewer")
         self.photoz = Tk.StringVar()  # photoz
         self.photoz.set("-")
         self.photoz_err = Tk.StringVar()  # photoz error
